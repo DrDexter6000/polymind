@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.polymind/
+*.tsbuildinfo
+
+# AI tool artifacts
+.claude/
+
+# Dev docs (local only)
+.dev/
