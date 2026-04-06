@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -rn 'phase-.*\\\\.md\\\\|ROADMAP\\\\|ARCHITECTURE\\\\|PRD\\\\|README' .dev/docs/*.md)",
+      "Bash(grep -v '^\\\\-\\\\-$')"
+    ]
+  }
+}

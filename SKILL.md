@@ -1,203 +1,77 @@
 ---
 name: polymind
-description: "Multi-agent harness for OpenClaw - intelligent task orchestration with adaptive learning"
+description: "Intelligent LLM router for OpenClaw - turn-level scene + complexity aware model routing with fallback chains"
 version: 0.1.0
-author: Master Dexter & Agent Research Division 🦐
+author: DrDexter6000
 license: MIT
-parent: AGENTS.md
 ---
 
-# PolyMind Skill
+# PolyMind
 
-> **Intelligent Agent Orchestration for OpenClaw**
-
----
-
-## 🎯 Quick Reference
+## Commands
 
 | Command | Description |
 |---------|-------------|
-| `/omo plan <goal>` | Enter strategic planning mode |
-| `/omo work` | Execute current plan |
-| `/omo status` | Check active agents & tasks |
-| `/omo agent <type>` | Switch to specific agent |
-| `/omo pause` | Pause background tasks |
-| `/omo resume` | Resume paused tasks |
+| `/polymind setup` | Scan installed models, recommend optimal routing config, write to openclaw.json |
+| `/polymind status` | Show routing table (scene x complexity matrix), active state, fallback events |
+| `/polymind config` | Edit routing config (models, scene mappings, complexity tiers, enable/disable) |
 
----
+## Plugin Hooks
 
-## 🏗️ Architecture
+| Hook | Purpose |
+|------|---------|
+| `before_model_resolve` | Default turn-level routing; short high-confidence continuations may inherit prior scene before returning `{ modelOverride, providerOverride }` |
 
-PolyMind integrates with OpenClaw via **Plugin + Skill hybrid**:
+## Routing Dimensions
 
-```
-┌────────────────────────────────────────────┐
-│  OpenClaw Core                             │
-│  ├── Plugin: before_model_resolve hook     │
-│  │   └── Model routing per agent type      │
-│  ├── Skill: Command handlers               │
-│  │   └── /omo plan, /omo work, etc.       │
-│  └── sessions_spawn                        │
-│      └── SubAgent execution               │
-└────────────────────────────────────────────┘
-```
+### Scene (what type of task)
 
----
+| Scene | Trigger | Strategy |
+|-------|---------|----------|
+| `coding` | Code generation, debugging, refactoring | Best coding model |
+| `reasoning` | Analysis, planning, complex reasoning | Best reasoning model |
+| `writing` | Docs, emails, content creation | Best writing model |
+| `fast` | Short Q&A, confirmations, chat | Fastest model |
 
-## 📋 Tool Usage
+### Complexity (what tier of model)
 
-### When to Trigger PolyMind
+| Complexity | Trigger | Effect |
+|------------|---------|--------|
+| `high` | Long message, code blocks, multi-file, multi-step | Route to top-tier model |
+| `medium` | Default | Route to balanced model |
+| `low` | Short, follow-up, single-step | Route to lightweight model |
 
-| Scenario | Trigger |
-|----------|---------|
-| Complex multi-step task | `/omo plan: <description>` |
-| Research + coding combination | Auto-trigger on complexity score |
-| Need specific agent mode | `/omo agent <artisan\|scholar\|scribe>` |
-| Check task progress | `/omo status` |
-| Background task management | `/omo pause` / `/omo resume` |
+## Configuration
 
-### Complexity Auto-Detection
-
-PolyMind automatically suggests `/omo plan` when:
-- Task description > 100 tokens
-- Multiple capability keywords detected
-- User history shows similar tasks used planning
-
----
-
-## 🎭 Agent Types
-
-### Conductor Agents (Meta)
-
-| Agent | Purpose | Trigger |
-|-------|---------|---------|
-| **Maestro** | Strategic planning, goal decomposition | `/omo plan` |
-| **Oracle** | Plan validation, risk assessment | Before execution |
-| **Dispatcher** | Route to specialists, load balance | Every task |
-
-### Specialist Agents (Workers)
-
-| Agent | Purpose | Model Preference |
-|-------|---------|------------------|
-| **Artisan** | Code generation, debugging | Coding-optimized |
-| **Scholar** | Research, analysis | Reasoning |
-| **Scribe** | Writing, documentation | Balanced |
-| **Envoy** | Communication, notifications | Fast + TTS |
-| **Warden** | Security, monitoring | Conservative |
-
----
-
-## ⚙️ Configuration
-
-### Minimal Config
+Config lives in `openclaw.json` under the `polymind` key. Supports both flat and tiered formats:
 
 ```json
 {
-  "omo": {
+  "polymind": {
     "enabled": true,
-    "defaultAgent": "dispatcher",
-    "autoPlanThreshold": 0.7
-  }
-}
-```
-
-### Full Config
-
-```json
-{
-  "omo": {
-    "enabled": true,
-    "defaultAgent": "dispatcher",
-    "autoPlanThreshold": 0.7,
-    "agentModels": {
-      "maestro": {
-        "primary": "zhipu/GLM-5.1",
-        "fallbacks": ["modelstudio/kimi-k2.5"]
+    "modelHints": {
+      "claude-opus": { "scenes": ["coding", "reasoning"], "tier": 1 }
+    },
+    "routes": {
+      "<scene>": {
+        "high":   { "primary": "<provider/model>", "fallbacks": ["..."] },
+        "medium": { "primary": "<provider/model>", "fallbacks": ["..."] },
+        "low":    { "primary": "<provider/model>", "fallbacks": ["..."] }
       },
-      "artisan": {
-        "primary": "modelstudio/kimi-k2.5",
-        "fallbacks": ["zhipu/GLM-5-Turbo"]
-      },
-      "scholar": {
-        "primary": "zhipu/GLM-5.1",
-        "fallbacks": ["modelstudio/kimi-k2.5"]
-      },
-      "envoy": {
-        "primary": "minimax/MiniMax-M2.7-highspeed",
-        "fallbacks": []
-      },
-      "warden": {
-        "primary": "modelstudio/kimi-k2.5",
-        "fallbacks": ["zhipu/GLM-5-Turbo"]
+      "fast": {
+        "primary": "<provider/model>",
+        "fallbacks": ["..."]
       }
-    },
-    "memory": {
-      "enabled": true,
-      "learningThreshold": 3
-    },
-    "autonomous": {
-      "enabled": false,
-      "cronSchedule": "0 9 * * *"
     }
   }
 }
 ```
 
----
+Flat format (no complexity tiers) is also supported for simpler setups.
 
-## 🔄 Execution Flow
+`modelHints` is optional. It overrides or extends the built-in setup-time capability seed used by `/polymind setup`.
 
-```
-User: /omo plan: Build a personal website
+## Dependencies
 
-PolyMind:
-1. Dispatcher analyzes intent → complexity HIGH
-2. Maestro creates plan:
-   - Research: current frameworks
-   - Design: wireframe suggestions  
-   - Code: implement chosen framework
-   - Deploy: hosting setup
-3. Oracle validates plan (risks: hosting cost, domain)
-4. Dispatcher spawns parallel subagents:
-   - Scholar: research
-   - Artisan: prototype
-5. Scribe aggregates results
-6. User receives: plan + research + code
-```
-
----
-
-## 📊 State Management
-
-| State | Location | Persistence |
-|-------|----------|-------------|
-| Task Queue | `.memory/omo/queue.json` | File-based |
-| Active Sessions | OpenClaw API | Ephemeral |
-| User Preferences | `memory/users/{id}/omo-preferences.md` | Long-term |
-| Learning Patterns | `memory/topics/polymind/patterns/` | Long-term |
-
----
-
-## 🚧 Current Status
-
-**Version**: 0.1.0 (Design Phase)
-
-**Implemented**: ❌ Not yet
-**In Progress**: 📋 Architecture & planning
-**Planned**: 
-- [ ] Phase 1 MVP (4 weeks)
-- [ ] Phase 2 Full suite (4 weeks)  
-- [ ] Phase 3 Learning layer (4 weeks)
-
----
-
-## 🔗 References
-
-- [PRD](./PRD.md) - Product Requirements Document
-- [README](./README.md) - User-facing documentation
-- [Architecture](./docs/ARCHITECTURE.md) - Technical design
-- oh-my-openagent: [GitHub](https://github.com/code-yeongyu/oh-my-openagent)
-
----
-
-*PolyMind: Bringing the power of agent teams to OpenClaw* 🦐
+- OpenClaw Plugin API: `before_model_resolve` hook
+- OpenClaw Skill API: command registration

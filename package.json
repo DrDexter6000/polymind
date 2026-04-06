@@ -1,0 +1,32 @@
+{
+  "name": "polymind",
+  "version": "0.1.0",
+  "description": "Intelligent LLM router for OpenClaw",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "eslint src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrDexter6000/polymind.git"
+  },
+  "keywords": [],
+  "author": "DrDexter6000",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "bugs": {
+    "url": "https://github.com/DrDexter6000/polymind/issues"
+  },
+  "homepage": "https://github.com/DrDexter6000/polymind#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
+    "eslint": "^10.2.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2"
+  }
+}
