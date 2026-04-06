@@ -1,265 +1,268 @@
 # PolyMind 🧠
 
-> **The Multi-Agent Harness for OpenClaw** — Intelligent task orchestration with adaptive learning
+> **智能 LLM 路由器 + 可进化 SubAgent 分配器**  
+> OpenClaw 的模型路由基础设施
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![OpenClaw](https://img.shields.io/badge/OpenClaw-Plugin-blue)](https://openclaw.ai)
+[![OpenClaw Plugin](https://img.shields.io/badge/OpenClaw-Plugin-blue)](https://openclaw.ai)
 
 ---
 
-## 🙏 Acknowledgment
+## 🙏 致敬
 
-**PolyMind is deeply inspired by [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent)** (48k+ ⭐), the dominant agent harness for OpenCode.
+**PolyMind 深受 [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) 启发** (48k+ ⭐)
 
-As a long-time user of oh-my-openagent, I was impressed by its elegant architecture and philosophy of "agent teams for intelligent coding." However, OpenClaw is fundamentally different from OpenCode — it's a **24/7 autonomous digital employee platform**, not a terminal pair-programmer.
+作为 oh-my-openagent 的深度用户，我一直想把它的理念带到 OpenClaw。但 OpenClaw 是**24/7 自主数字员工平台**，不是终端配对编程工具。
 
-**PolyMind is NOT a source port.** It is:
-- An **adaptation** of oh-my-openagent's architecture philosophy for OpenClaw's unique characteristics
-- A **ground-up implementation** leveraging OpenClaw's native APIs
-- An **extension** adding new capabilities like long-term memory evolution and the Harness Framework
-
-If you use OpenCode, go use oh-my-openagent — it's excellent. If you use OpenClaw, welcome to PolyMind.
+**PolyMind 不是源码移植**，而是：
+- 基于 oh-my-openagent 的架构理念，为 OpenClaw 全新实现
+- 专注于**模型路由 + 任务分配 + 记忆进化**
+- 加入 Harness Framework 等新理念
 
 ---
 
-## 🎯 What is PolyMind?
+## 🎯 PolyMind 是什么？
 
-PolyMind brings **intelligent multi-agent orchestration** to OpenClaw:
+**四阶段演进路线**:
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│  Your Request → Dispatcher → Specialist Agents → Results       │
-│                                                                │
-│  • Maestro (Strategic Planning)                               │
-│  • Artisan (Code Generation)                                  │
-│  • Scholar (Research & Analysis)                              │
-│  • Scribe (Content Creation)                                  │
-│  • Envoy (Communication)                                      │
-│  • Warden (Security & Monitoring)                             │
-└────────────────────────────────────────────────────────────────┘
+Stage 1: LLM 智能路由      ← 现在从这里开始
+Stage 2: SubAgent 路由分配
+Stage 3: 记忆进化
+Stage 4: Harness 完全形态
 ```
 
-### Key Differences from oh-my-openagent
+### Stage 1: LLM 智能路由 (基础) ✅
 
-| Aspect | oh-my-openagent (OpenCode) | PolyMind (OpenClaw) |
-|--------|---------------------------|---------------------|
-| **Platform** | Terminal-based | Multi-channel (Web/IM/Voice) |
-| **Session** | Ephemeral | Persistent |
-| **Operation** | Human-paired | Fully autonomous capable |
-| **Memory** | Repository context | Long-term user learning |
-| **Framework** | Task-level routing | **Harness Framework** (goal-level) |
-
----
-
-## ✨ Features
-
-### Core Capabilities
-
-- **🎭 Multi-Agent Dispatch**: 6 specialized agents for different task types
-- **🧠 Intelligent Routing**: Automatic model selection per agent via `before_model_resolve`
-- **📚 Memory Evolution**: Learns your preferences from interactions
-- **⏰ Autonomous Mode**: Self-triggered planning and execution
-- **🔄 Parallel Execution**: Multiple subagents working simultaneously
-
-### The Harness Framework
-
-PolyMind introduces the **Harness Framework** — a goal-level orchestration system:
-
-```bash
-# Strategic planning mode
-/omo plan: Build a personal website
-
-# Execute current plan  
-/omo work
-
-# Check all active agents
-/omo status
-
-# Switch to specific agent mode
-/omo agent artisan
-```
-
----
-
-## 🚀 Quick Start
-
-### Installation
-
-```bash
-# Via ClawHub (when available)
-clawhub install polymind
-
-# Or manual install
-git clone https://github.com/yourusername/polymind.git
-cd polymind && npm install
-```
-
-### Configuration
-
-Add to your `openclaw.json`:
+> **免费版 ClawRouter，零费用路由**
 
 ```json
 {
-  "plugins": [
-    {
-      "id": "polymind",
-      "path": "./skills/polymind"
-    }
-  ],
-  "omo": {
-    "agentModels": {
-      "maestro": {
-        "primary": "zhipu/GLM-5.1",
-        "fallbacks": ["modelstudio/kimi-k2.5"]
-      },
-      "artisan": {
-        "primary": "modelstudio/kimi-k2.5"
-      }
-    }
+  "polymind": {
+    "artisan": "modelstudio/kimi-k2.5",
+    "maestro": "zhipu/GLM-5.1",
+    "envoy": "minimax/MiniMax-M2.7-highspeed"
   }
 }
 ```
 
-### First Task
+- 场景识别 → 自动路由最优模型
+- Fallback 链保证可用性
+- 通过 `before_model_resolve` Hook 实现
+
+### Stage 2: SubAgent 路由分配 (进阶)
+
+> **不同任务分配不同模型**
+
+```bash
+/omo artisan   → kimi-k2.5 (代码专家)
+/omo scholar   → GLM-5.1 (研究分析)
+/omo plan      → Maestro 规划 → 多模型协作
+```
+
+### Stage 3: 记忆进化 (高级)
+
+> **越用越懂你**
+
+- 记录路由决策效果
+- 用户纠正反馈捕获
+- 自动调整推荐
+
+### Stage 4: Harness 完全形态 (终极)
+
+> **全自动编排**
 
 ```
-/omo plan: Research the latest AI agent frameworks and create a comparison report
-
-PolyMind will:
-1. Maestro breaks down the goal into subtasks
-2. Oracle validates the plan
-3. Scholar researches current frameworks
-4. Scribe writes the comparison
-5. Results aggregated and delivered
-```
-
----
-
-## 🏗️ Architecture
-
-```
-User Input
-    │
-    ▼
-┌─────────────────────────────────────────┐
-│  Intent Classification (Dispatcher)    │
-└──────────────┬──────────────────────────┘
-               │
-    ┌──────────┴──────────┐
-    ▼                     ▼
-┌──────────────┐   ┌──────────────┐
-│   Maestro    │   │ Direct Route │
-│   (Plan)     │   │ (Simple)     │
-└──────┬───────┘   └──────┬───────┘
-       │                  │
-       └────────┬─────────┘
-                ▼
-    ┌───────────────────────────┐
-    │  Specialist Agent Pool    │
-    │  • Artisan (Code)         │
-    │  • Scholar (Research)     │
-    │  • Scribe (Writing)       │
-    │  • Envoy (Communication)  │
-    │  • Warden (Security)      │
-    └───────────┬───────────────┘
-                │
-                ▼
-    ┌───────────────────────────┐
-    │  OpenClaw sessions_spawn  │
-    │  (Isolated subagents)     │
-    └───────────────────────────┘
+目标 → 自动规划 → 智能路由 → 执行 → 学习 → 进化
 ```
 
 ---
 
-## 🎭 Agent Personas
+## ✨ 核心特性
 
-| Agent | Role | Best For | Model Preference |
-|-------|------|----------|------------------|
-| **Maestro** | Strategic Planner | Complex multi-step goals | Reasoning models |
-| **Oracle** | Plan Validator | Risk assessment, validation | Conservative models |
-| **Dispatcher** | Task Router | Intent classification | Fast models |
-| **Artisan** | Code Specialist | Programming, debugging | Coding-optimized |
-| **Scholar** | Researcher | Web search, analysis | Balanced reasoning |
-| **Scribe** | Content Writer | Documentation, drafts | Creative models |
-| **Envoy** | Communicator | Notifications, summaries | Fast + TTS |
-| **Warden** | Security Ops | Audits, monitoring | Conservative |
+| 特性 | 说明 | 阶段 |
+|------|------|------|
+| **智能路由** | 基于场景自动选模型 | Stage 1 |
+| **多模型支持** | 6 大 Agent 角色专属配置 | Stage 1 |
+| **私有记忆** | 隔离存储，不碰 ClawMemory | Stage 3 |
+| **Onboarding** | 智能配置推荐 | Stage 1 |
+| **官方排名** | LLM_RANKING.md 参考 | Stage 1 |
+| **用户排名** | 基于体验的个性化调整 | Stage 3 |
+| **Harness** | 多智能体编排 | Stage 4 |
 
 ---
 
-## 💡 Philosophy
+## 🚀 快速开始
 
-### Why Free?
+### 1. 安装
+
+```bash
+# 克隆仓库
+git clone https://github.com/DrDexter6000/polymind.git
+cd polymind
+
+# 或通过 ClawHub (待上线)
+clawhub install polymind
+```
+
+### 2. Onboarding 配置
+
+```bash
+# 启动引导
+/polymind setup
+
+# PolyMind 会:
+# 1. 扫描您已安装的模型
+# 2. 基于官方排名推荐
+# 3. 采访您的体验偏好
+# 4. 生成最优配置
+```
+
+### 3. 使用
+
+```bash
+# 智能路由 (自动)
+直接对话，PolyMind 自动选模型
+
+# 手动指定
+/omo artisan   # 切换到代码专家模式
+/omo scholar   # 切换到研究模式
+/omo status    # 查看当前状态
+```
+
+---
+
+## 🏗️ 架构
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  OpenClaw                                                    │
+│  ├── Plugin: before_model_resolve hook                      │
+│  │   └── PolyMind 拦截模型解析                              │
+│  ├── Skill: /polymind, /omo 命令                           │
+│  └── sessions_spawn: SubAgent 执行                          │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│  PolyMind 数据 (隔离!)                                       │
+│  ├── .polymind/ (PolyMind 私有)                           │
+│  │   ├── config.json                                       │
+│  │   ├── routing/                                          │
+│  │   └── preferences/                                       │
+│  └── memory/ (ClawMemory) ❌ 绝对不碰                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🎭 6 大 Agent 角色
+
+| Agent | 职责 | 推荐模型 |
+|-------|------|---------|
+| **Maestro** | 战略规划 | GLM-5.1 > kimi-k2.5 |
+| **Oracle** | 计划审查 | kimi-k2.5 > GLM-5.1 |
+| **Artisan** | 代码专家 | kimi-k2.5 > GLM-5-Turbo |
+| **Scholar** | 研究分析 | GLM-5.1 > kimi-k2.5 |
+| **Scribe** | 内容写作 | GLM-5-Turbo > qwen3.6 |
+| **Envoy** | 通信联络 | MiniMax-M2.7 > GLM-5-Turbo |
+
+---
+
+## 📊 Onboarding 流程
+
+```
+[1] 扫描模型      → 读取 openclaw.json
+[2] 官方匹配      → 查询 LLM_RANKING.md
+[3] 用户采访      → 性价比/速度排名
+[4] 综合推荐      → 0.6×官方 + 0.4×用户
+[5] 写入配置      → 启用 PolyMind
+```
+
+---
+
+## 💡 设计原则
+
+### 为什么免费？
 
 > "连 oh-my-openagent 都不收费，我有什么资格收费？"
-> 
 > — PolyMind Creator
 
-We believe agent orchestration infrastructure should be:
-- **Accessible**: No paywalls, no feature restrictions
-- **Open**: Community-driven development
-- **Evolving**: Learning from every user interaction
+PolyMind 永远免费，不设付费墙。
 
-If PolyMind brings value to your workflow, consider [buying us a coffee ☕](https://buymeacoffee.com/polymind) (purely optional).
+### 为什么隔离记忆？
 
-### Not ClawRouter
+PolyMind 有**独立的私有记忆** (`.polymind/`)，绝不触碰用户的 ClawMemory 全局记忆体系。
 
-We respect ClawRouter's technical implementation, but we don't agree with:
-- Pay-per-use routing fees
-- Closed-source premium features
-- Centralized control
+### 与 ClawRouter 的区别？
 
-PolyMind routes using **your own** model configurations. No middleman fees.
+| | ClawRouter | PolyMind |
+|--|------------|----------|
+| 费用 | 收费 | 免费 |
+| 路由 | 模型路由 | 模型路由 + SubAgent |
+| 进化 | 无 | 有 |
+| Harness | 无 | Stage 4 有 |
 
 ---
 
-## 🛠️ Development
+## 📁 项目结构
+
+```
+polymind/
+├── README.md           # 本文件
+├── SKILL.md            # Skill 规范
+├── ARCHITECTURE.md     # 架构文档
+├── LLM_RANKING.md      # 官方 LLM 排名
+├── onboarding.md       # Onboarding 流程
+├── src/
+│   ├── plugin/         # Plugin 实现
+│   ├── skill/          # Skill 命令
+│   └── onboard/        # Onboarding 逻辑
+└── .polymind/          # 私有数据 (gitignore)
+```
+
+---
+
+## 🛠️ 开发
 
 ### Roadmap
 
-- [x] Phase 0: Architecture design & PRD
-- [ ] Phase 1: MVP (3 agents + basic orchestration)
-- [ ] Phase 2: Full 8-agent suite
-- [ ] Phase 3: Learning layer + autonomous mode
-- [ ] Phase 4: Multi-channel coordination
+- [x] Stage 0: 架构设计 & PRD ✅
+- [ ] Stage 1: MVP (路由 + Onboarding)
+- [ ] Stage 2: SubAgent 路由
+- [ ] Stage 3: 记忆进化
+- [ ] Stage 4: Harness 完全形态
 
-### Contributing
+### 贡献
 
-We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-Areas we need help:
-- Additional specialist agents
-- Memory system improvements
-- Multi-channel adapters
-- Documentation translations
+欢迎提交 Issue 和 PR！
 
 ---
 
-## 📚 Documentation
+## 📚 文档
 
-- [Architecture](./docs/ARCHITECTURE.md) - System design & data flow
-- [Agent API](./docs/AGENTS.md) - Creating custom agents
-- [Configuration](./docs/CONFIG.md) - Full configuration reference
-- [Changelog](./CHANGELOG.md) - Version history
+- [Architecture](./ARCHITECTURE.md) - 详细系统设计
+- [LLM Ranking](./LLM_RANKING.md) - 官方模型排名
+- [Onboarding](./onboarding.md) - 配置引导流程
+- [SKILL.md](./SKILL.md) - Skill 规范
 
 ---
 
-## 🔗 Related Projects
+## 🔗 相关项目
 
-| Project | Platform | Relationship |
-|---------|----------|--------------|
-| [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) | OpenCode | 🙏 Inspiration & philosophy |
-| [ClawRouter](https://github.com/BlockRunAI/ClawRouter) | OpenClaw | Alternative (paid) routing |
-| [OpenClaw](https://openclaw.ai) | — | Host platform |
+| 项目 | 平台 | 关系 |
+|------|------|------|
+| [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) | OpenCode | 🙏 灵感来源 |
+| [ClawRouter](https://github.com/BlockRunAI/ClawRouter) | OpenClaw | 竞品 (收费) |
+| [OpenClaw](https://openclaw.ai) | — | 宿主平台 |
 
 ---
 
 ## 📄 License
 
-MIT License - see [LICENSE](./LICENSE)
+MIT License
 
 ---
 
-## 🦐 Creator's Note
+## 🦐
 
-As a long-time oh-my-openagent user, I missed having similar orchestration power when I switched to OpenClaw. PolyMind is my attempt to
+*PolyMind: 让每个 OpenClaw 用户都能享受智能模型路由*
